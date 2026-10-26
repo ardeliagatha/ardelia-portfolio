@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Project</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<style>
+.crumb{display:flex;flex-wrap:wrap;gap:6px;font-size:.88rem;color:var(--mut);margin-bottom:24px}
+.crumb a{color:inherit}.crumb [aria-current]{color:var(--ink);font-weight:600}
+.phero{padding:48px 0 56px;border-radius:0 0 48px 48px}
+.phero h1{font-size:clamp(2rem,5vw,3.4rem);margin:14px 0 8px;max-width:22ch}
+.phero .sub{font:italic 1.4rem var(--serif);color:#4a4468}
+.phero .sum{max-width:62ch;margin:16px 0;color:#3f3a5c}
+.read{max-width:760px;margin:0 auto;padding:0 24px}
+.blk{padding:34px 0;border-bottom:1px solid var(--line)}
+.blk h2{font-size:1.5rem;margin-bottom:12px}
+.blk p,.blk li{color:#4a4468}.blk ul{padding-left:22px;display:grid;gap:6px}
+.gtitle{padding-top:44px}.gtitle h2{font-size:1.5rem}
+.slider{max-width:600px;margin:0 auto;padding:18px 24px 44px;position:relative}
+.strack{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;border-radius:22px}
+.strack::-webkit-scrollbar{display:none}
+.sbtn{position:absolute;top:calc(50% - 40px);width:46px;height:46px;border-radius:50%;border:1.5px solid var(--ink);background:#fff;font-size:1.4rem;cursor:pointer;box-shadow:3px 3px 0 var(--lav);z-index:2}
+.sbtn.l{left:36px}.sbtn.r{right:36px}
+.sdots{display:flex;justify-content:center;gap:8px;margin-top:18px}
+.sdots button{width:10px;height:10px;padding:0;border:0;border-radius:999px;background:#D5CCEE;cursor:pointer;transition:width .2s,background .2s}
+.sdots button[aria-current="true"]{width:28px;background:var(--ac)}
+.slide{flex:0 0 100%;scroll-snap-align:center;margin:0;background:#fff;border:1px solid var(--line);border-radius:22px;padding:12px}
+.gi{all:unset;display:block;width:100%;cursor:zoom-in;background:var(--lav);border-radius:14px;overflow:hidden}
+.gi:focus-visible{outline:3px solid var(--ac);outline-offset:3px}
+.slide img{width:100%;height:auto;max-height:360px;object-fit:contain;display:block}
+.slide figcaption{font-size:.85rem;color:var(--mut);padding:10px 4px 2px}
+.plinks{padding:32px 0;display:flex;gap:10px;flex-wrap:wrap}
+.pn2{display:grid;grid-template-columns:1fr 1fr;gap:16px;max-width:1040px;margin:0 auto;padding:30px 24px 60px}
+.pn2 a{text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:22px;padding:20px 24px;transition:transform .2s,box-shadow .2s}
+.pn2 a:hover{transform:translateY(-3px);box-shadow:0 14px 30px #25203f14}
+.pn2 small{display:block;color:var(--mut);font-size:.8rem;font-weight:600}.pn2 b{font-size:1.05rem}
+.pn2 .nx{text-align:right;grid-column:2}
+#lb{overflow:visible}#lb img{max-height:80vh;object-fit:contain}
+#lbCap{color:#fff;text-align:center;padding:10px;font-size:.9rem;margin:0}
+.lbn{position:absolute;top:45%;width:44px;height:44px;border-radius:50%;border:0;background:#fff;font-size:1.4rem;cursor:pointer}
+#lbP{left:10px}#lbN{right:10px}
+.nf{padding:120px 0;text-align:center}
+@media(max-width:700px){.pn2{grid-template-columns:1fr}.sbtn.l{left:30px}.sbtn.r{right:30px}.pn2 .nx{grid-column:1;text-align:left}.phero{border-radius:0 0 32px 32px}}
+</style>
+</head>
+<body>
+<header class="nav"><div class="wrap">
+  <a class="logo" href="index.html" id="logo"></a>
+  <a class="btn ghost sm" href="index.html#projects">← Back to Projects</a>
+</div></header>
+<main id="main"></main>
+<footer><div class="wrap"><span id="foot"></span><a href="index.html">Back to home</a></div></footer>
+<dialog id="lb"><button class="close" id="lbClose" aria-label="Close">×</button>
+  <button class="lbn" id="lbP" aria-label="Previous image">‹</button><button class="lbn" id="lbN" aria-label="Next image">›</button>
+  <img id="lbImg" alt=""><p id="lbCap"></p></dialog>
+<script src="data.js"></script>
+<script>
+const D=DATA,$=id=>document.getElementById(id);
+const clean=t=>String(t||"").replace(/\s*\[[^\]]*\]/g,"").trim();   // hides unfilled [Edit: ...] notes
+const items=a=>(Array.isArray(a)?a:[a]).map(clean).filter(Boolean);
+const okUrl=u=>/^(https?:\/\/|[\w][\w./%-]*(\?[\w=&%-]*)?(#[\w-]*)?$)/i.test(u||"");
+const bg=c=>"var(--"+(c||"lav")+")";
+
+const paperAsProject=p=>({slug:p.slug,color:"sky",kind:"research",type:"Research",title:p.title,sub:p.label,meta:"",tags:p.chips,summary:"",overview:p.text,images:p.images,links:p.link?[{label:"Read paper",url:p.link}]:[]});
+const ALL=[...D.projects,paperAsProject(D.paper)];
+const slug=new URLSearchParams(location.search).get("p");
+const i=ALL.findIndex(x=>x.slug===slug), p=ALL[i];
+
+function sec(h,v){const a=items(v);if(!a.length)return"";
+  return '<div class="blk"><h2>'+h+'</h2>'+(Array.isArray(v)?'<ul>'+a.map(x=>"<li>"+x+"</li>").join("")+'</ul>':"<p>"+a[0]+"</p>")+'</div>'}
+
+let shown=[],cur=0;
+function lb(n){cur=(n+shown.length)%shown.length;$("lbImg").src=shown[cur].s;$("lbImg").alt=shown[cur].c||"";$("lbCap").textContent=shown[cur].c||"";
+  $("lbP").hidden=$("lbN").hidden=shown.length<2;if(!$("lb").open)$("lb").showModal()}
+
+async function build(){
+  $("logo").textContent=D.name.split(" ")[0];$("foot").textContent="© "+new Date().getFullYear()+" "+D.name;
+  if(!p){document.title="Project not found";$("main").innerHTML='<div class="nf wrap"><h1>Project not found</h1><p class="lead" style="margin:12px auto 24px">This project address does not exist.</p><a class="btn" href="index.html#projects">Back to Projects</a></div>';return}
+  document.title=p.title+" · "+D.name;
+  const h={sm:"Summary",ov:"Overview & Background",an:"Analysis",so:"Solution & Design",co:"My Contribution & Tools",ou:"Outcome & Deliverables"};   /* same titles for every project */
+  const isRes=p.kind==="research";
+  const crumb='<nav class="crumb" aria-label="Breadcrumb"><a href="index.html">Home</a> / <a href="index.html#'+(isRes?"research":"projects")+'">'+(isRes?"Research & Publications":"Selected Projects")+'</a> / <span aria-current="page">'+p.title+'</span></nav>';
+  const chips=[p.sub,p.meta].filter(Boolean).map(x=>'<span class="pill">'+x+'</span>').join(" ")+" "+(p.tags||[]).map(t=>'<span class="chip">'+t+'</span>').join("");
+  /* only images that actually load are shown */
+  const imgs=await Promise.all((p.images||[]).filter(m=>m&&m.s).map(m=>new Promise(r=>{const im=new Image();im.onload=()=>r(m);im.onerror=()=>r(null);im.src=m.s})));
+  shown=imgs.filter(Boolean);
+  const gal=shown.length?'<div class="read gtitle"><h2>Project evidence</h2></div><div class="slider"><div class="strack" id="strack" tabindex="0" aria-label="Project evidence slides">'+shown.map((m,k)=>'<figure class="slide"><button class="gi" data-k="'+k+'" aria-label="Enlarge image'+(m.c?": "+m.c:"")+'"><img src="'+m.s+'" alt="'+(m.c||p.title)+'"></button>'+(m.c?'<figcaption>'+m.c+'</figcaption>':"")+'</figure>').join("")+'</div>'+(shown.length>1?'<button class="sbtn l" id="sPrev" aria-label="Previous slide">‹</button><button class="sbtn r" id="sNext" aria-label="Next slide">›</button><div class="sdots" id="sdots">'+shown.map((_,k)=>'<button aria-label="Go to slide '+(k+1)+'"></button>').join("")+'</div>':"")+'</div>':"";
+  const links=(p.links||[]).filter(l=>l&&l.label&&okUrl(l.url));
+  const lk=links.length?'<div class="plinks">'+links.map(l=>'<a class="btn ghost" href="'+l.url+'"'+(/^https?:/i.test(l.url)?' target="_blank" rel="noopener"':"")+'>'+l.label+(/^https?:/i.test(l.url)?" ↗":"")+'</a>').join("")+'</div>':"";
+  const pv=i>0&&i<D.projects.length?D.projects[i-1]:null, nx=i>=0&&i<D.projects.length-1?D.projects[i+1]:null;
+  const nav=(pv||nx)?'<div class="pn2">'+(pv?'<a href="project.html?p='+pv.slug+'"><small>← Previous project</small><b>'+pv.title+'</b></a>':"<span></span>")+(nx?'<a class="nx" href="project.html?p='+nx.slug+'"><small>Next project →</small><b>'+nx.title+'</b></a>':"")+'</div>':"";
+  $("main").innerHTML='<div class="phero" style="background:'+bg(p.color)+'"><div class="wrap">'+crumb+'<span class="pill">'+p.type+'</span><h1>'+p.title+'</h1>'+(p.sub&&!isRes?'<div class="sub">'+p.sub+'</div>':"")+'<div class="chips">'+chips+'</div></div></div>'+
+    '<div class="read">'+sec(h.sm,p.summary)+sec(h.ov,p.overview)+sec(h.an,p.analysis)+sec(h.so,p.solution)+'</div>'+gal+
+    '<div class="read">'+sec(h.co,p.contribution)+sec(h.ou,p.outcome)+lk+'</div>'+nav;
+  document.querySelectorAll(".gi").forEach(b=>b.onclick=()=>lb(+b.dataset.k));
+  const tr=$("strack");
+  if(tr&&shown.length>1){
+    const dots=[...document.querySelectorAll("#sdots button")],step=()=>tr.clientWidth+16;
+    const idx=()=>Math.round(tr.scrollLeft/step());
+    const go=k=>tr.scrollTo({left:((k+shown.length)%shown.length)*step(),behavior:"smooth"});
+    const mark=()=>dots.forEach((d,k)=>d.setAttribute("aria-current",k===idx()));
+    tr.addEventListener("scroll",mark);mark();
+    dots.forEach((d,k)=>d.onclick=()=>go(k));
+    $("sPrev").onclick=()=>go(idx()-1);$("sNext").onclick=()=>go(idx()+1);
+    tr.addEventListener("keydown",e=>{if(e.key==="ArrowLeft")go(idx()-1);if(e.key==="ArrowRight")go(idx()+1)});
+  }
+}
+$("lbClose").onclick=()=>$("lb").close();$("lbP").onclick=()=>lb(cur-1);$("lbN").onclick=()=>lb(cur+1);
+$("lb").addEventListener("click",e=>{if(e.target===$("lb"))$("lb").close()});
+document.addEventListener("keydown",e=>{if($("lb").open&&shown.length>1){if(e.key==="ArrowLeft")lb(cur-1);if(e.key==="ArrowRight")lb(cur+1)}});
+build();
+</script>
+</body>
+</html>
