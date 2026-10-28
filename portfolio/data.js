@@ -26,7 +26,7 @@ const DATA = {
   ],
   focus: [
     { c:"mint",  t:"Business Analysis", d:"Business process improvement, stakeholder needs, requirements gathering" },
-    { c:"sky",   t:"System Analysis",   d:"System requirements, BPMN, UML, functional specifications" },
+    { c:"sky",   t:"System Analysis",   d:"System requirements, BPMN, UML, functional specifications, SDLC" },
     { c:"peach", t:"ERP Solutions",     d:"SAP, SCM processes, Odoo ERP" }
   ],
 
@@ -36,7 +36,7 @@ const DATA = {
       tags:["BPMN","As-Is / To-Be Process","Process Improvement","Visual Paradigm","Bizagi Modeler"],
       applied:"Business Process Modeling — PT Kiat Ananda Group (2024)", project:0 },
     { ic:"system", bg:"lav", t:"System Analysis & Design", d:"Analyzing user needs and translating system requirements into structured system models and documentation.",
-      tags:["Requirements Analysis","UML","Use Case Diagram","Activity Diagram","Sequence Diagram","Class Diagram","Component Diagram","Deployment Diagram","ERD"],
+      tags:["Requirements Analysis","UML","Use Case Diagram","Activity Diagram","Sequence Diagram","Class Diagram","Component Diagram","Deployment Diagram","ERD", "SDLC"],
       applied:"Information System Analysis & Design — PT Kiat Ananda Group (2025)", project:3 },
     { ic:"docs", bg:"butter", t:"Requirements & Documentation", d:"Gathering stakeholder needs and documenting functional requirements to support system development.",
       tags:["Stakeholder Analysis","Functional Requirements","System Documentation","Use Case Description"],
